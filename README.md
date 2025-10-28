@@ -38,27 +38,29 @@ GRAPE provides four reproducible environments:
 ```text
 GRAPE/
 │
-├── src/ # Core physical and mathematical routines
-│ └── GRAPE_core.jl
+├── src/                            # Core physical and mathematical routines
+│   └── GRAPE_core.jl
 │
-├── examples/
-│ ├── example_ParkerSolarProbe.jl
-│ └── example_simplified_no_tetrad.jl
+├── examples/                       # Demonstration cases
+│   ├── example_ParkerSolarProbe.jl
+│   └── example_simplified_no_tetrad.jl
 │
-├── capsule_light/ # Light version (requires Julia)
-│ ├── Project.toml
-│ ├── Manifest.toml
-│ └── README_CAPSULE.md
+├── capsule_julia_light/            # Light capsule (Julia already installed)
+│   └── readme                      # Instructions for quick local run
 │
-├── capsule_docker_light/ # Docker light version
-│ └── Dockerfile
+├── capsule_docker_light/           # Docker light capsule (Julia official image)
+│   ├── Dockerfile
+│   └── readme                      # Minimal instructions
 │
-├── capsule_full/ # Full interactive Docker capsule
-│ ├── Dockerfile
-│ └── start_menu.sh
+├── capsule_docker_full/            # Full interactive Docker capsule
+│   ├── Dockerfile
+│   ├── start_menu.sh               # Interactive shell menu (dialog-based)
+│   └── readme                      # Usage instructions
 │
-├── capsule_installer/ # Auto-installers for Windows & Linux
-│ ├── install_grape.ps1
-│ └── install_grape.sh
+├── capsule_julia_install/          # Auto-installers (Windows & Linux)
+│   ├── install_grape.ps1           # PowerShell installer for Windows
+│   ├── install_grape.sh            # Bash installer for Linux/macOS
+│   └── readme                      # Usage instructions
 │
-└── readme.md # (this file)
+├── LICENSE                         # MIT license
+└── README.md                       # Main documentation (this file)
