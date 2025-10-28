@@ -35,7 +35,7 @@ GRAPE provides four reproducible environments:
 ---
 
 ## 📁 Repository Structure
-GRAPE/
+```textGRAPE/
 │
 ├── src/ # Core physical and mathematical routines
 │ └── GRAPE_core.jl
