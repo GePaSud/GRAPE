@@ -35,3 +35,29 @@ GRAPE provides four reproducible environments:
 ---
 
 ## 📁 Repository Structure
+GRAPE/
+│
+├── src/ # Core physical and mathematical routines
+│ └── GRAPE_core.jl
+│
+├── examples/
+│ ├── example_ParkerSolarProbe.jl
+│ └── example_simplified_no_tetrad.jl
+│
+├── capsule_light/ # Light version (requires Julia)
+│ ├── Project.toml
+│ ├── Manifest.toml
+│ └── README_CAPSULE.md
+│
+├── capsule_docker_light/ # Docker light version
+│ └── Dockerfile
+│
+├── capsule_full/ # Full interactive Docker capsule
+│ ├── Dockerfile
+│ └── start_menu.sh
+│
+├── capsule_installer/ # Auto-installers for Windows & Linux
+│ ├── install_grape.ps1
+│ └── install_grape.sh
+│
+└── readme.md # (this file)
