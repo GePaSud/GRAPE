@@ -1,6 +1,6 @@
 # 🪐 GRAPE — General Relativity Accelerometer-based Propagation Environment
 
-**Authors:** JP. Barriot, J. O’Leary, J. Ya, JM. MARI  
+**Authors:** JP. Barriot, J. O’Leary, J. Ya, JM. Mari
 **License:** MIT  
 **Version:** 1.0 — October 2025  
 **Journal:** *Software X* (submitted)
