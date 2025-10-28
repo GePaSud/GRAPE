@@ -63,7 +63,7 @@ GRAPE/
 │   └── readme                      # Usage instructions
 │
 ├── LICENSE                         # MIT license
-└── README.md                       # Main documentation (this file)
+└── README.md                       # Main documentation (this file)```
 
 ## 📊 Output and Results
 
