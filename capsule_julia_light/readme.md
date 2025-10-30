@@ -10,4 +10,5 @@ julia --project=. -e "using Pkg; Pkg.instantiate()"
 
 julia --project=. examples/example_simplified_no_tetrad.jl
 
-julia --project=. examples/example_ParkerSolarProbe.jl
+julia --project=. examples/example_ParkerSolarProbe_NoTetrad.jl
+
