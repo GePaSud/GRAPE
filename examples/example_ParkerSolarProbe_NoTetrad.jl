@@ -826,65 +826,74 @@ t_start = now()
 prt3("integration start at = ", t_start)
 # ================================================================================================
 
+# ================================================================================================
+# 🔁 INTEGRATION LOOP WITH DATA COLLECTION  (fixed global scope)
+# ================================================================================================
+r_plot = Float64[]
+phi_plot = Float64[]
+tau_plot = Float64[]
+time_coord_plot = Float64[]
+
+# define globals you'll mutate in the loop
+y = copy(y0_pt)
+evpar = evpar0
+
+for k in 1:N_integration_steps
+    global y
+    global evpar
+
+    y = rki(evpar, evpar + evpar_step,
+            y, Given_Metric,
+            Eqs_Motion_chol_simple,
+            Non_Grav_Grad,
+            Non_Grav_Bus)
+
+    evpar += evpar_step
+
+    # collect samples for plots/diagnostics
+    push!(r_plot, Float64(y[3]))
+    push!(phi_plot, Float64(mod2pi(y[5])))
+    push!(tau_plot, Float64(y[9]) / 86400.0)
+    push!(time_coord_plot, Float64(y[1]) / 86400.0)
+end
+
+# expose final values for the rest of the script
+y_end = y
+evpar_end = evpar
+
+println("✅ Données d’intégration stockées : $(length(r_plot)) points.")
+println("✅ Intégration terminée.")
+println("Durée intégrée = ", Float64(evpar_end - evpar0), " s")
+println("État final :")
+display(y_end)
+
 
 # ================================================================================================
-# 🧮 INITIALIZATION OF THE CHOLESKY TETRAD
-# ------------------------------------------------------------------------------------------------
-# The Cholesky-based tetrad provides a numerically stable orthonormal basis
-# used internally by the symplectic integrator to preserve geometric invariants.
-#
-# The function returns:
-#   (tetradchol, tetradcholder)     → direct tetrad and its derivative
-#   (tetradcholinv, tetradcholinvder) → inverse tetrad and its derivative
+# 📊 FINALIZATION — OUTPUT SUMMARY (no tetrad validation)
 # ================================================================================================
-((tetradchol, tetradcholder), (tetradcholinv, tetradcholinvder)) =
-    Cholesky_tetrad_der(y0_pt, Given_Metric)
+prt3("coordinate time at start and end = ",
+     Float64(y0_pt[1]), " s, ",
+     Float64(y_end[1]), " s, Δ = ",
+     Float64(y_end[1] - y0_pt[1]))
 
-# --- Validation of orthonormality for Cholesky tetrad
-(dift, difti) = verif_tetrad(tetradchol, y0_pt, Given_Metric)
-prt3("validation Cholesky tetrad at start = ",
-     Float64(log10(dift)), Float64(log10(difti)),
-     "(log10 of precision)")  # tetrad and inverse tetrad precisions
-# ================================================================================================
+prt3("proper time at start and end = ",
+     Float64(y0_pt[9]), " s, ",
+     Float64(y_end[9]), " s, Δ = ",
+     Float64(y_end[9] - y0_pt[9]))
 
+prt3("integration time at start and end = ",
+     Float64(y0_pt[10]), " s, ",
+     Float64(y_end[10]), " s, Δ = ",
+     Float64(y_end[10] - y0_pt[10]))
 
-# ================================================================================================
-# 🚀 MAIN RELATIVISTIC INTEGRATION RUN
-# ------------------------------------------------------------------------------------------------
-# Call the GRAPE core routine `main()`:
-#   Inputs:
-#     - evpar0         → initial integration time
-#     - ychol0_pt      → initial state in Cholesky tetrad form
-#     - Given_Metric   → selected metric model (e.g., Kerr or Schwarzschild)
-#
-#   Outputs:
-#     - evpar_end              → final integration time
-#     - ychol_end              → final state (in Cholesky form)
-#     - dtaudevpar_internal_end → proper-time to integration-time ratio at the end
-# ================================================================================================
-evpar_start = evpar0
-evpar_end, ychol_end, dtaudevpar_internal_end = main(evpar0, ychol0_pt, Given_Metric)
-# ================================================================================================
+dtaudevpar_internal_end = der1_tau_internal(y_end, Given_Metric)
+prt3("partial derivative of proper time wrt proper time at end (propagated) = ",
+     dtaudevpar_internal_end)
 
-
+dtaudevpar_external_end = evpar2tau_external(time_option, evpar_end, y_end, Given_Metric)
+prt3("partial derivative of proper time wrt integration time at end (imposed) = ",
+     dtaudevpar_external_end)
 # ================================================================================================
-# 📉 FINALIZATION — CONVERT BACK TO CHART REPRESENTATION
-# ------------------------------------------------------------------------------------------------
-# Convert the final Cholesky state back to the chart coordinates
-# to extract physical quantities and validate tetrads again.
-# ================================================================================================
-y_end = ychart_from_ychol(ychol_end, Given_Metric)
-(tetrad_end, ) = FWtetrad_from_y(y_end)
-
-# --- Validation of final tetrad orthonormality
-(dift, difti) = verif_tetrad(tetrad_end, y_end, Given_Metric)
-dift = log10(dift)
-difti = log10(difti)
-prt3("validation Fermi-Walker tetrad at end = ",
-     Float64(dift), Float64(difti),
-     "(log10 of precision)")
-# ================================================================================================
-
 
 # ================================================================================================
 # 🧭 INVARIANT CHECKS — CONSERVATION OF MOMENTA
@@ -1009,298 +1018,27 @@ prt3("elapsed time for integration = ", t_end - t_start)
 # physical quantities (position, velocity, Doppler, tetrad accuracy, etc.), and prepares data
 # vectors for plotting using PythonPlot.
 # ==================================================================================================
+using PythonPlot
 
+# --- Rayon en fonction du temps propre ---
+figure()
+plot(tau_plot, r_plot)
+xlabel("Temps propre τ (jours)")
+ylabel("Rayon r (km)")
+title("Parker Solar Probe — GRAPE NoTetrad")
+grid(true)
+savefig("orbit_radius_vs_tau_NoTetrad_$(timetag).png")
 
-# ================================================================================================
-# 🧮 DATA STRUCTURE INITIALIZATION
-# ------------------------------------------------------------------------------------------------
-# Preallocate Float64 vectors for the plotting variables.
-# Each corresponds to one physical observable extracted per time step.
-# ================================================================================================
-time_coord_plot = Float64[]
-r_plot = Float64[]
-dr_plot = Float64[]
-phi_plot = Float64[]
-theta_plot = Float64[]
-tau_plot = Float64[]
-dif_tau_timecoord_plot = Float64[]
-Doppler_plot = Float64[]
-dif_tetrad_plot = Float64[]
-X_Plot = Float64[]
-Y_Plot = Float64[]
-Z_Plot = Float64[]
-four_velocity_check_plot = Float64[]
+# --- Projection polaire (r, φ) ---
+figure()
+plot(r_plot .* cos.(phi_plot), r_plot .* sin.(phi_plot))
+xlabel("x (km)")
+ylabel("y (km)")
+title("Orbital Plane — PSP NoTetrad")
+axis("equal")
+grid(true)
+savefig("orbit_xy_NoTetrad_$(timetag).png")
 
-# State vector for each read step
-y1 = fill(BF0, nsyst)
-evpar_count = BF0
-# ================================================================================================
-
-
-# ================================================================================================
-# 📂 READING THE SPACECRAFT EPHEMERIS FILE
-# ------------------------------------------------------------------------------------------------
-# The file `SCephemeris_<timetag>.txt` is read line by line.
-# Each block of `nsyst` lines corresponds to a full spacecraft state vector.
-#
-# For each state:
-#   - Parse and store dynamical quantities
-#   - Verify tetrad orthonormality
-#   - Compute derived variables (Doppler, Cartesian coordinates, etc.)
-# ================================================================================================
-open("SCephemeris_$(timetag).txt", "r") do f
-    while !eof(f)
-        dif_tetrad = BF0
-
-        # --- Read the state vector
-        for j = 1:nsyst
-            line = readline(f)
-            line = rstrip(lstrip(line))          # remove leading/trailing spaces
-            fields = split(line)                 # split by whitespace
-            y1[j] = parse(BigFloat, fields[2])   # extract numerical value
-        end
-
-        # --- Extract key state variables
-        time_coord = Float64(y1[1])
-        r          = Float64(y1[3])
-        dr         = Float64(y1[4])
-        phi        = mod2pi(Float64(y1[5]))   # longitude modulo 2π
-        theta      = Float64(y1[7])           # colatitude
-        tau        = Float64(y1[9])
-
-        # --- Compute the derivative of proper time wrt integration time
-        dtaudevpar_int = der1_tau_internal(y1, Given_Metric)
-
-        # --- Compute quasi-Doppler shift (incoming spherical wave model)
-        Doppler = transmit_frequency_Doppler * (y1[2] - BF1)   # in Hertz
-
-        # --- Check deviation from normalized 4-velocity (should be ≈ 0)
-        four_velocity_check = Float64(dtaudevpar_int - BF1)
-
-        # ============================================================================================
-        # 🗃️ Store computed quantities for plotting
-        # ============================================================================================
-        push!(four_velocity_check_plot, log10(abs(four_velocity_check)))
-        push!(time_coord_plot, time_coord / 86400.0)    # convert to days
-        push!(r_plot, r)
-        push!(dr_plot, dr)
-        push!(Doppler_plot, Float64(Doppler))
-
-        # ============================================================================================
-        # 🧭 Compute "pseudo-Cartesian" coordinates from Boyer–Lindquist polar coords
-        # --------------------------------------------------------------------------------------------
-        # NOTE: this is **not** a Euclidean conversion — it’s valid only for visualization purposes
-        # in the context of the Kerr metric (using as = Jstar / Mstar / c_light).
-        # ============================================================================================
-        Z = r * cos(theta)
-        X = sqrt(r^2 + as^2) * sin(theta) * cos(phi)
-        Y = sqrt(r^2 + as^2) * sin(theta) * sin(phi)
-
-        push!(Z_Plot, Z / 1000.0)  # km → 1000 = Mm scale for plotting
-        push!(X_Plot, X / 1000.0)
-        push!(Y_Plot, Y / 1000.0)
-
-        # --- Angular coordinates and proper time (in degrees/days)
-        push!(phi_plot, phi / pi * 180.0)
-        push!(theta_plot, theta / pi * 180.0)
-        push!(tau_plot, tau / 86400.0)
-
-        # --- Increment integration counter
-        global evpar_count = evpar_count + evpar_step
-    end
-end
-# ================================================================================================
-
-
-# ================================================================================================
-# 🕓 TIME NORMALIZATION AND DIFFERENCE COMPUTATION
-# ------------------------------------------------------------------------------------------------
-# The coordinate time and proper time are re-centered so that t=0 corresponds
-# to the start of the integration. Their difference provides a direct measure
-# of relativistic time dilation along the trajectory.
-# ================================================================================================
-tc0 = time_coord_plot[1]
-taustart = tau_plot[1]
-dif_tc_tau_plot = Float64[]
-
-for i = 1:length(time_coord_plot)
-    time_coord_plot[i] -= tc0
-    tau_plot[i] -= taustart
-    push!(dif_tc_tau_plot, time_coord_plot[i] - tau_plot[i])
-end
-# ================================================================================================
-# ==================================================================================================
-# 🎨 VISUALIZATION AND RESULTS EXPORT SECTION
-# --------------------------------------------------------------------------------------------------
-# This section produces the scientific figures illustrating the Parker Solar Probe trajectory.
-# Each plot is saved as a PNG file and also displayed interactively.
-# --------------------------------------------------------------------------------------------------
-# NOTE: All figures are saved in the working directory tagged by `timetag`
-# ==================================================================================================
-
-
-# ================================================================================================
-# 🪐 RADIUS vs PROPER TIME
-# ------------------------------------------------------------------------------------------------
-figure(figsize = (9.5, 5.0))
-plot_id = plot(tau_plot, r_plot, "g", linewidth = 1.0)
-title("Radius distance vs Proper time _$(timetag)")
-xlabel("Proper time (days)", size = 12)
-ylabel("Radius (km)", size = 12)
-xticks(size = 12)
-yticks(size = 12)
-display(plot_id)
-filefig = "display_radius$(timetag).png"
-savefig(filefig)
-# ================================================================================================
-
-
-# ================================================================================================
-# 🧭 LONGITUDE vs PROPER TIME
-# ------------------------------------------------------------------------------------------------
-figure(figsize = (9.5, 5.0))
-plot_id = scatter(tau_plot, phi_plot, marker = ".", linewidths = 0.2)
-title("Longitude vs Proper time _$(timetag)")
-xlabel("Proper time (days)", size = 12)
-ylabel("Longitude (deg.)", size = 12)
-xticks(size = 12)
-yticks(size = 12)
-display(plot_id)
-filefig = "display_longitude$(timetag).png"
-savefig(filefig)
-# ================================================================================================
-
-
-# ================================================================================================
-# 🧭 COLATITUDE vs PROPER TIME
-# ------------------------------------------------------------------------------------------------
-figure(figsize = (9.5, 5.0))
-plot_id = scatter(tau_plot, theta_plot, marker = ".", linewidths = 0.2)
-title("Colatitude vs Proper time _$(timetag)")
-xlabel("Proper time (days)", size = 12)
-ylabel("Colatitude (deg.)", size = 12)
-xticks(size = 12)
-yticks(size = 12)
-display(plot_id)
-filefig = "display_colatitude$(timetag).png"
-savefig(filefig)
-# ================================================================================================
-
-
-# ================================================================================================
-# 🚀 RADIAL VELOCITY vs PROPER TIME
-# ------------------------------------------------------------------------------------------------
-figure(figsize = (9.5, 5.0))
-plot_id = plot(tau_plot, dr_plot, "g", linewidth = 1.0)
-title("Radial velocity vs Proper time _$(timetag)")
-xlabel("Proper time (days)", size = 12)
-ylabel("Radial velocity (km/s)", size = 12)
-xticks(size = 12)
-yticks(size = 12)
-display(plot_id)
-filefig = "display_dr$(timetag).png"
-savefig(filefig)
-# ================================================================================================
-
-
-# ================================================================================================
-# 📡 DOPPLER SHIFT (INCOMING WAVE MODEL)
-# ------------------------------------------------------------------------------------------------
-figure(figsize = (9.5, 5.0))
-plot_id = plot(tau_plot, Doppler_plot, "g", linewidth = 1.0)
-title("Doppler (incoming wave) _$(timetag)")
-xlabel("Proper time (days)", size = 12)
-ylabel("Doppler (Hz)", size = 12)
-xticks(size = 12)
-yticks(size = 12)
-display(plot_id)
-filefig = "display_Doppler$(timetag).png"
-savefig(filefig)
-# ================================================================================================
-
-
-# ================================================================================================
-# ⏱️ TIME DILATION: COORDINATE TIME - PROPER TIME
-# ------------------------------------------------------------------------------------------------
-figure(figsize = (9.5, 5.0))
-plot_id = plot(tau_plot, dif_tc_tau_plot, "g", linewidth = 1.0)
-title("Coordinate time - Proper time vs Proper time _$(timetag)")
-xlabel("Proper time (days)", size = 12)
-ylabel("Time difference (sec.)", size = 12)
-xticks(size = 12)
-yticks(size = 12)
-display(plot_id)
-filefig = "display_diftctau$(timetag).png"
-savefig(filefig)
-# ================================================================================================
-
-
-# ================================================================================================
-# 🌀 ORBIT PROJECTION (r, θ)
-# ------------------------------------------------------------------------------------------------
-figure(figsize = (9.5, 5.0))
-plot_id = scatter(theta_plot, r_plot, marker = ".", linewidths = 0.2)
-title("Orbit (r, θ) _$(timetag)")
-xlabel("θ (colatitude)", size = 12)
-ylabel("Radius (km)", size = 12)
-xticks(size = 12)
-yticks(size = 12)
-display(plot_id)
-filefig = "display_orbit(r,theta)_$(timetag).png"
-savefig(filefig)
-# ================================================================================================
-
-
-# ================================================================================================
-# 🌀 ORBIT PROJECTION (r, φ)
-# ------------------------------------------------------------------------------------------------
-figure(figsize = (9.5, 5.0))
-plot_id = scatter(phi_plot, r_plot, marker = ".", linewidths = 0.2)
-title("Orbit (r, φ) _$(timetag)")
-xlabel("φ (longitude)", size = 12)
-ylabel("Radius (km)", size = 12)
-xticks(size = 12)
-yticks(size = 12)
-display(plot_id)
-filefig = "display_orbit(r,phi)_$(timetag).png"
-savefig(filefig)
-# ================================================================================================
-
-
-# ================================================================================================
-# 🌌 3D ORBIT REPRESENTATION
-# ------------------------------------------------------------------------------------------------
-# 3D plot of the spacecraft trajectory in pseudo-Cartesian coordinates.
-# This is not an Euclidean space projection, but a useful visualization.
-# ================================================================================================
-figure(figsize = (10.5, 9.5))
-plot_id = plot3D(X_Plot, Y_Plot, Z_Plot, linewidth = 1.0)
-title("3D Orbit _$(timetag)")
-xlabel("X (1000 km)", size = 12)
-ylabel("Y (1000 km)", size = 12)
-zlabel("Z (1000 km)", size = 12)
-display(plot_id)
-filefig = "display_3Dorbit$(timetag).png"
-savefig(filefig)
-# ================================================================================================
-
-# ================================================================================================
-# 🧭 4-VELOCITY NORMALIZATION CHECK
-# ------------------------------------------------------------------------------------------------
-# Verifies that the 4-velocity norm remains unity throughout propagation.
-# This confirms that the integrator preserved the relativistic constraint.
-# ================================================================================================
-figure(figsize = (9.5, 5.0))
-plot_id = plot(tau_plot, four_velocity_check_plot, "g", linewidth = 1.0)
-title("Four-velocity normalization check _$(timetag)")
-xlabel("Proper time (days)", size = 12)
-ylabel("log10(error)", size = 12)
-xticks(size = 12)
-yticks(size = 12)
-display(plot_id)
-filefig = "display_four_velocity_check$(timetag).png"
-savefig(filefig)
-# ================================================================================================
 
 
 # ================================================================================================
