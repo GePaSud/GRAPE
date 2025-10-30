@@ -62,6 +62,7 @@ GRAPE/
 │   ├── install_grape.sh            # Bash installer for Linux/macOS
 │   └── readme                      # Usage instructions
 │
+├── 2025_10_29_GRAPE_USER_GUIDE_V1  # User's guide in pdf
 ├── LICENSE                         # MIT license
 └── README.md                       # Main documentation (this file)
 ```
