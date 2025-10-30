@@ -43,7 +43,7 @@ GRAPE/
 │
 ├── examples/                       # Demonstration cases
 │   ├── example_ParkerSolarProbe.jl
-│   └── example_simplified_no_tetrad.jl
+│   └── example_ParkerSolarProbe_NoTetrad.jl
 │
 ├── capsule_julia_light/            # Light capsule (Julia already installed)
 │   └── readme                      # Instructions for quick local run
