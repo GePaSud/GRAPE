@@ -1,7 +1,7 @@
 # 🪐 GRAPE — General Relativity Accelerometer-based Propagation Environment
 
 **Authors:** JP. Barriot, J. O’Leary, J. Ya, JM. Mari
-**License:** MIT  
+**License:** Apache 2.0  
 **Version:** 1.0 — October 2025  
 **Journal:** *Software X* - JP Barriot, J. O'Leary and J. Yan, Beyond Newtonian Orbitography for Geodesy, Astronomy and Planetary Sciences: the GRAPE Project, Journal of Physics: Conference Series 3109 (2025) 012057, doi:10.1088/1742-6596/3109/1/012057
 
