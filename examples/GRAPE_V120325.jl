@@ -1046,7 +1046,7 @@ const evpar_step=parse(BigFloat,"120.00") # integration time step in seconds for
 prt3("integration time step=",Float64(evpar_step),"seconds")
 const evpar0=BF0 # integration time start value for the integration process
 prt3("integration time at start of integration=",Float64(evpar0),"seconds")
-N_integration_steps=25_000 # number of time steps for the integration process
+N_integration_steps=250_000 # number of time steps for the integration process
 prt3("number of loops for integration process=",N_integration_steps)
 prt3("duration period of probe orbit in this run=",Float64(N_integration_steps*evpar_step),"seconds of integration time")
 c_light_nature=parse(BigFloat,"299792.458") # light velocity in km, fixed by IAU definition
@@ -1404,4 +1404,5 @@ prt3("timetag=",timetag)
 msg=Call_System("cmd /c echo computation finished")
 prt3(msg)
 close(runlogfile)
+
 end
