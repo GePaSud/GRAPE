@@ -26,7 +26,7 @@ GRAPE/
 │   └── GRAPE_core.jl
 │
 ├── examples/                       # Demonstration cases
-│   └── example_ParkerSolarProbe.jl
+│   └── GRAPE_V120325.jl
 │
 ├── 2025_10_29_GRAPE_USER_GUIDE_V1  # User's guide in pdf
 ├── LICENSE                         # MIT license
