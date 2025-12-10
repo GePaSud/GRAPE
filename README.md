@@ -16,23 +16,7 @@ It integrates the motion of a spacecraft within arbitrary spacetime metrics (Sch
 
 This repository contains:
 - The **core engine** written in Julia (`src/GRAPE_core.jl`)
-- A simplified **example** (Parker Solar Probe)
-- Several **reproducible capsules** (Software X standard)
-
----
-
-## 🧩 Capsule Types
-
-GRAPE provides four reproducible environments:
-
-| Capsule | Description | Reproducibility level |
-|----------|--------------|------------------------|
-| 🟩 **Light Capsule** | For users with Julia already installed | Code-only |
-| 🟨 **Docker-Light Capsule** | Automatic build in official Julia Docker | Environment-fixed |
-| 🟦 **Full Docker Capsule** | Includes menu and execution options | Interactive |
-| 🟥 **Installer Capsule** | Installs Julia and runs GRAPE automatically (Windows/Linux) | Fully automated |
-
----
+- An **example** (Parker Solar Probe)
 
 ## 📁 Repository Structure
 ```text
@@ -42,25 +26,7 @@ GRAPE/
 │   └── GRAPE_core.jl
 │
 ├── examples/                       # Demonstration cases
-│   ├── example_ParkerSolarProbe.jl
-│   └── example_ParkerSolarProbe_NoTetrad.jl
-│
-├── capsule_julia_light/            # Light capsule (Julia already installed)
-│   └── readme                      # Instructions for quick local run
-│
-├── capsule_docker_light/           # Docker light capsule (Julia official image)
-│   ├── Dockerfile
-│   └── readme                      # Minimal instructions
-│
-├── capsule_docker_full/            # Full interactive Docker capsule
-│   ├── Dockerfile
-│   ├── start_menu.sh               # Interactive shell menu (dialog-based)
-│   └── readme                      # Usage instructions
-│
-├── capsule_julia_install/          # Auto-installers (Windows & Linux)
-│   ├── install_grape.ps1           # PowerShell installer for Windows
-│   ├── install_grape.sh            # Bash installer for Linux/macOS
-│   └── readme                      # Usage instructions
+│   └── example_ParkerSolarProbe.jl
 │
 ├── 2025_10_29_GRAPE_USER_GUIDE_V1  # User's guide in pdf
 ├── LICENSE                         # MIT license
