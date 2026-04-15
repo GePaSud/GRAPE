@@ -44,7 +44,7 @@ They document the orbit geometry, relativistic effects, and numerical diagnostic
 
 | Figure | Description |
 |---------|--------------|
-| ![Orbit (r, θ)](output/display_orbit(r,theta)20251024103257.png) | **Polar orbit projection** in Schwarzschild coordinates (r, θ), showing altitude variation with respect to colatitude. |
+| ![Orbit (r, θ)](output/display_orbit(r,theta)20260414112300.png) | **Polar orbit projection** in Schwarzschild coordinates (r, θ), showing altitude variation with respect to colatitude. |
 | ![3D Orbit](output/display_3Dorbit20251024103257.png) | **Three-dimensional trajectory** reconstructed from the integrated position components. The slightly inclined ellipse reflects orbital precession. |
 | ![Orbit (r, φ)](output/display_orbit(r,phi)20251024103257.png) | **Azimuthal projection** of the orbit (r, φ). The perihelion shift is clearly visible, a hallmark of relativistic effects. |
 | ![Radius vs Proper Time](output/display_radius20251024103257.png) | Time evolution of the **orbital radius** (in km) versus **proper time** (in days). The periodic minima correspond to perihelion passages. |
