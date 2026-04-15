@@ -23,12 +23,9 @@ This repository contains:
 GRAPE/
 │
 ├── src/                            # Core physical and mathematical routines
-│   └── GRAPE_core.jl
+│   └── GRAPE_V041226.jl
 │
-├── examples/                       # Demonstration cases
-│   └── GRAPE_V120325.jl
-│
-├── 2025_10_29_GRAPE_USER_GUIDE_V1  # User's guide in pdf
+├── GRAPE_USER_GUIDE_V2             # User's guide in pdf
 ├── LICENSE                         # MIT license
 └── README.md                       # Main documentation (this file)
 ```
