@@ -45,9 +45,9 @@ They document the orbit geometry, relativistic effects, and numerical diagnostic
 | Figure | Description |
 |---------|--------------|
 | ![Orbit (r, θ)](output/display_orbit(r,theta)20260414112300.png) | **Polar orbit projection** in Schwarzschild coordinates (r, θ), showing altitude variation with respect to colatitude. |
-| ![3D Orbit](output/display_3Dorbit20251024103257.png) | **Three-dimensional trajectory** reconstructed from the integrated position components. The slightly inclined ellipse reflects orbital precession. |
-| ![Orbit (r, φ)](output/display_orbit(r,phi)20251024103257.png) | **Azimuthal projection** of the orbit (r, φ). The perihelion shift is clearly visible, a hallmark of relativistic effects. |
-| ![Radius vs Proper Time](output/display_radius20251024103257.png) | Time evolution of the **orbital radius** (in km) versus **proper time** (in days). The periodic minima correspond to perihelion passages. |
+| ![3D Orbit](output/display_3Dorbit20260414112300.png) | **Three-dimensional trajectory** reconstructed from the integrated position components. The slightly inclined ellipse reflects orbital precession. |
+| ![Orbit (r, φ)](output/display_orbit(r,phi)20260414112300.png) | **Azimuthal projection** of the orbit (r, φ). The perihelion shift is clearly visible, a hallmark of relativistic effects. |
+| ![Radius vs Proper Time](output/display_radius20260414112300.png) | Time evolution of the **orbital radius** (in km) versus **proper time** (in days). The periodic minima correspond to perihelion passages. |
 
 ---
 
@@ -55,9 +55,9 @@ They document the orbit geometry, relativistic effects, and numerical diagnostic
 
 | Figure | Description |
 |---------|--------------|
-| ![Colatitude vs Proper Time](output/display_colatitude20251024103257.png) | Evolution of the **colatitude** angle during the orbit, showing oscillations caused by solar gravitational field curvature. |
-| ![Longitude vs Proper Time](output/display_longitude20251024103257.png) | Change in **longitude** with proper time, highlighting orbital precession. |
-| ![Radial Velocity](output/display_dr20251024103257.png) | **Radial velocity profile** (km/s) showing sharp peaks at perihelion (~ ± 80 km/s). |
+| ![Colatitude vs Proper Time](output/display_colatitude20260414112300.png) | Evolution of the **colatitude** angle during the orbit, showing oscillations caused by solar gravitational field curvature. |
+| ![Longitude vs Proper Time](output/display_longitude20260414112300.png) | Change in **longitude** with proper time, highlighting orbital precession. |
+| ![Radial Velocity](output/display_dr20260414112300.png) | **Radial velocity profile** (km/s) showing sharp peaks at perihelion (~ ± 80 km/s). |
 
 ---
 
@@ -65,8 +65,8 @@ They document the orbit geometry, relativistic effects, and numerical diagnostic
 
 | Figure | Description |
 |---------|--------------|
-| ![Coordinate vs Proper Time](output/display_diftctau20251024103257.png) | **Coordinate minus proper time** difference (Δt – τ). Illustrates time dilation accumulated over one full orbital period. |
-| ![Doppler Shift](output/display_Doppler20251024103257.png) | **Relativistic Doppler shift** for a continuous downlink signal (8 GHz). Peaks coincide with approach and recession at perihelion. |
+| ![Coordinate vs Proper Time](output/display_diftctau20260414112300.png) | **Coordinate minus proper time** difference (Δt – τ). Illustrates time dilation accumulated over one full orbital period. |
+| ![Doppler Shift](output/display_Doppler20260414112300.png) | **Relativistic Doppler shift** for a continuous downlink signal (8 GHz). Peaks coincide with approach and recession at perihelion. |
 
 ---
 
@@ -74,8 +74,8 @@ They document the orbit geometry, relativistic effects, and numerical diagnostic
 
 | Figure | Description |
 |---------|--------------|
-| ![Four-Velocity Norm Check](output/display_four_velocity_check20251024103257.png) | Log₁₀ of deviation from the ideal **four-velocity norm**. The invariant norm is conserved within ≈ 10⁻⁴². |
-| ![Fermi–Walker Tetrad Check](output/display_FWtetrad_error20251024103257.png) | **Fermi–Walker tetrad orthonormality error** across the integration. Errors stay below 10⁻³⁰, confirming numerical stability. |
+| ![Four-Velocity Norm Check](output/display_four_velocity_check20260414112300.png) | Log₁₀ of deviation from the ideal **four-velocity norm**. The invariant norm is conserved within ≈ 10⁻⁴². |
+| ![Fermi–Walker Tetrad Check](output/display_FWtetrad_error20260414112300.png) | **Fermi–Walker tetrad orthonormality error** across the integration. Errors stay below 10⁻³⁰, confirming numerical stability. |
 
 ---
 
