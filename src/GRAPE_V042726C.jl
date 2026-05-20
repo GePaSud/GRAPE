@@ -2,7 +2,13 @@ module GRAPE_P
 # GRAPE = General Relativity Accelerometer-based Propagation Environment
 # coding in Julia by Jean-Pierre Barriot, April 12, 2026
 # subject to Apache 2.0 license, GitHub.
-# submitted to software-X journal (R1)
+#---------------------------softwareX reference-----------------------------------
+# A symplectic integrator for a native relativistic orbitography software
+# Jean-Pierre Barriot, Joseph O’Leary, Jean-Martial Mari,Jianguo Yan
+# E-mail address: jean-pierre.barriot@upf.pf (J.-P. Barriot). 
+# https://doi.org/10.1016/j.softx.2026.102699
+# Received 10 December 2025; Received in revised form 16 April 2026; Accepted 27 April 2026 
+#---------------------------------------------------------------------------------
 # Windows 11 version, Julia 1.12.1
 #------------------------------------------------------------------------------------------------------------------------------------------------
 # integration of the motion of a spacecraft (S/C) in a general relativity framework with associated attitude by Fermi-Walker transport,
@@ -31,7 +37,7 @@ module GRAPE_P
 # 2/ equation (9) is the proper time wrt integration time, equation (10) directly gives access to the integration time
 # 3/ equations (11-26) are relative to the Fermi-Walker transported co-moving tetrad, that permits the orientation of the S/C wrt distant stars
 # one of the 4-vectors of this transported tetrad must be the 4-velocity (so the name co-moving),
-# in order to keep the orientation of this terad constant wrt distant stars
+# in order to keep the orientation of this tetrad constant wrt distant stars
 # equations (11-26) are not necessary for the integration of equations(1-10), an can be omitted for ephemeris applications
 #------------------------------------------------------------------------------------------------------------------------------------------------
 # in this code, as an example, we consider the orbit of the Parker Solar probe probe in the Kerr's polar metric
@@ -45,7 +51,7 @@ module GRAPE_P
 # it is absolutely needed for a proper modeling of the relativistic effects, see keyword
 # setprecision(BigFloat,xxx) # xxx=53 for 64 bits IEEE754, 113 for 128 bits, 237 for 256 bits IEEE754,
 # by using the GNU-MPFR library built natively in Julia
-# this is *why* this code was developped in Julia, where BigFloats are, again, natively implemented
+# this is *why* this code was developed in Julia, where BigFloats are, again, natively implemented
 # porting this code to other computer languages must be done with extreme care about the intrinsic precision of floating variables on these languages
 #------------------------------------------------------------------------------------------------------------------------------------------------
 # the code also outputs a pseudo-Doppler observable (as a display), that corresponds to the ratio between
@@ -283,7 +289,7 @@ function Kerr_Metric_Polar(y::Vector{BigFloat})
 # Kerr metric, reduces to Schwarzschild_Metric_Polar if the star is not rotating (value as=0)
 # Boyer–Lindquist polar coordinates (technically oblate spheroidal coordinates),
 # see catalog of spacetimes, https://doi.org/10.48550/arXiv.0904.4184
-# the "as" parameter is the scaled angular momentum, in units of length
+# the "as" parameter is the scaled angular momentum, in units of length, along the "Z axis" of the coordinate system
 # as=Jstar/Mstar/c_light
     r=y[3] ; theta=y[7]
     sn=sin(theta) ; cs=cos(theta)
@@ -1056,7 +1062,7 @@ prt3(pi_ref,length(pi_ref)-1,"digits of pi for control") # to check accuracy of 
 const itmax_rki=10 # should be usually larger than 6, 10 is needed for Parker Solar Probe in a highly elliptical orbit
 prt3("number of iterations for implicit integrator=",itmax_rki)
 # the integrator can be changed at will by the end user, but this one is symplectic
-order_parder_metric=4 # this defines the precision for the computation (2, 4, 6 or 8) of the numerical derivation of the metric / Christoffel (connection) symbols throughout the code
+const order_parder_metric=4 # this defines the precision for the computation (2, 4, 6 or 8) of the numerical derivation of the metric / Christoffel (connection) symbols throughout the code
 prt3("central difference order for Christoffel symbols=",order_parder_metric)
 # epsmin_CSN, epsabs are used in Numerical_parder_metric_y, these values must be checked to be sure that they are OK for the case being studied
 const epsabs_CSN=parse(BigFloat,"1.e-12")  # cte for numerical derivation of Christoffel (connection) symbols
@@ -1107,6 +1113,7 @@ if Given_Metric == Kerr_Metric_Polar_name
    prt3("initialization of Kerr metric")
    const Jsun=parse(BigFloat,"2.02e35") # Angular momentum of the Sun kg km^2 s^-1 # value=1.92 1o^41 kg m^2 s^-1
    prt3("angular momentum of the Sun=",Float64(Jsun),"km^2 kg s^-1")
+   # caution: for the illustrative case thereafter, we assume that the angular momentum of the Sun is along the "Z axis" of the underlying coordinate system
    const Jstar=Jsun
    prt3("angular momentum of star=",Float64(Jstar),"km^2 kg s^-1")
    const as=Jstar/Mstar/c_light # this is the constant in length units entering the Kerr's metric
@@ -1122,9 +1129,10 @@ solar_radiation_pressure=solar_constant/c_light/BF1000 # solar pressure in Newto
 prt3("solar_radiation_pressure=",Float64(solar_radiation_pressure*BF1000*BF1000),"micro-N/m^2")
 # initial and running state vectors: eqs of motion 8; proper time 2; tetrad 16
 y0_pt=fill(BF0,nsyst) # contravariant vector, initial state vector must be *wrt proper time* in chart coordinates
-# all the stuff between the ~~~~~~~~~~~~~~~~~~~~~~ lines is the initialisation vector for the Parker Solar probe, can be changed at will 
+# all the stuff between the ~~~~~~~~~~~~~~~~~~~~~~ lines is the initialisation vector for a Parker Solar-like probe, can be changed at will 
 # ------------------------------------------------------------------------------------------------------------------------------------------
 #=
+caution: cannonball shape model for PSP-like
 Solar shield reflection coefficient 1.8
 Solar panels reflection coefficient 1.38
 Solar shield’s area 4 m^2
@@ -1140,7 +1148,7 @@ y0_pt is the initial state vector per se, given ****wrt to proper time**** of th
 these values are given with respect to the Kerr polar metric provided in this code
 y0[1]=t0 # coordinate time initial value # must be coordinate time, ****cannot be changed****
 y0[2]=dtdtau0 # initial rate of coordinate time wrt proper time
-# for the space part, you can use any sysyem of coordinates you want, provided that you are consistent throughout the software
+# for the space part, you can use any system of coordinates you want, provided that you are consistent throughout the software
 y0[3]=r0 # radius distance initial value
 y0[4]=drdtau0 # initial r rate wrt proper time
 y0[5]=phi0 # longitude initial value
@@ -1151,8 +1159,12 @@ y0[9]=tau0 # proper time initial value
 y0[10]=evpar0 # integration time initial value
 =#
 # BODY_GM=init_de430() # to be activated in order to use de430 ephemeris
-#----------------------------------initial vector for PSP UT Time: 2025-06-09T00:00:00.00 --------------------------------------------
-# pure heliocenric orbit
+#---------------------------------initial epoch for PSP UT Time: 2025-06-09T00:00:00.00 -----------------------------------------
+# caution: this *illustrative* test is *not* intended to be an exact model of the PSP orbit.
+# caution: pure heliocentric orbit, orientation of the "inertial frame" centered to the Sun wrt stars arbitrary,
+# caution: no other celestial body, no flattening of the Sun, solar angular momentum along the "Z axis" of the "inertial frame".
+# the semi-major axis and eccentricity of initial elements are the ones of PSP at given epoch.
+# the orders of magnitude of the solar radiation prssure and Lense-Thirring effect are correct.
 y0_pt[1]=parse(BigFloat,"8.026992691847092000000000000000000000000000000000000000000000000000000013e+08") # J2000 initial epoch
 y0_pt[2]=parse(BigFloat,"1.000000036065583982352343088267053815632478870312984159711699273598484404")
 y0_pt[3]=parse(BigFloat,"6.05555029296586368735956299733688278740147641652955018507419361797892692e+07")
@@ -1164,6 +1176,7 @@ y0_pt[8]=parse(BigFloat,"2.15470643098230744688593345309492276849140620402409791
 #--------------------------------------------------------------------------------------------------------------------------------------
 y0_pt_Newton=fill(BF0,nsyst) # velocities wrt to coordinate time
 for i=1:4
+    y0_pt_Newton[2*i-1]=y0_pt[2*i-1]
     y0_pt_Newton[2*i]=y0_pt[2*i]/y0_pt[2]
 end
 # dtaudevpar_internal must be equal to unity wrt to numerical precision for y0_pt[2,4,6,8] to be acceptable as an initial vector
@@ -1432,3 +1445,4 @@ prt3(msg)
 close(runlogfile)
 
 end
+
