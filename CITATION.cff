@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use GRAPE, please cite it using the metadata from this file."
+title: "GRAPE: General Relativity Accelerometer-based Propagation Environment"
+version: "1.0"
+type: software
+authors:
+  - family-names: Barriot
+    given-names: JP
+  - family-names: O'Leary
+    given-names: J
+  - family-names: Yan
+    given-names: J
+  - family-names: Mari
+    given-names: JM
+repository-code: "https://github.com/GePaSud/GRAPE"
+license: "Apache-2.0"
+date-released: "2026-05-23"
+abstract: "GRAPE is a Julia-based orbital propagation environment based on general relativity."
+references:
+  - type: article
+    title: "Beyond Newtonian Orbitography for Geodesy, Astronomy and Planetary Sciences: the GRAPE Project"
+    authors:
+      - family-names: Barriot
+        given-names: JP
+      - family-names: O'Leary
+        given-names: J
+      - family-names: Yan
+        given-names: J
+    doi: "10.1088/1742-6596/3109/1/012057"
